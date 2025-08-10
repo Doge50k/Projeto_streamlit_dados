@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados PostgreSQL
+  db:
+    image: postgres:13
+    container_name: meu_banco_postgres
+    env_file:
+      - .env  # Carrega as variáveis do arquivo .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persiste os dados
+    ports:
+      - "5432:5432" # Expõe a porta para poder conectar por fora se quiser fazer debug
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Serviço de Extração de Dados
+  extractor:
+    build: ./extractor # Constrói a imagem a partir do Dockerfile na pasta ./extractor
+    container_name: meu_extrator_python
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy # Garante que este serviço só inicie DEPOIS que o 'db' estiver saudável
+
+  # Serviço do Dashboard Streamlit
+  dashboard:
+    build: ./dashboard # Constrói a imagem a partir do Dockerfile na pasta ./dashboard
+    container_name: meu_dashboard_streamlit
+    env_file:
+      - .env
+    ports:
+      - "8501:8501" # Mapeia a porta 8501 do contêiner para a 8501 da sua máquina
+    depends_on:
+      db:
+        condition: service_healthy # Também espera o banco de dados ficar pronto
+
+volumes:
+  postgres_data:
