@@ -39,5 +39,11 @@ services:
       db:
         condition: service_healthy # Também espera o banco de dados ficar pronto
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:

@@ -57,7 +57,7 @@ Siga os passos abaixo para rodar a aplicação localmente:
 
 ```bash
 git clone https://github.com/Doge50k/Projeto_streamlit_dados.git
-cd nome-do-seu-repositorio
+cd Projeto_streamlit_dados
 ````
 
 2. **Crie o arquivo de variáveis de ambiente:**
